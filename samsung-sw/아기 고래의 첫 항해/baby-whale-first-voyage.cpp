@@ -73,59 +73,6 @@ void move() { //방문 가능한 칸만 들어오도록
 
 
 //2: 가장 가까운 바다 이동
-/*
-pair<int, int> jump() {
-
-    //cout << "Start Jump\n";
-
-    //최단 거리를 찾기  -
-    //같다면 우선순위가 좌하우상이므로 탐색용 dx, dy새로 정의해서 사용
-    //int ndx[4] = { 0, 1, 0, -1 };
-    //int ndy[4] = { -1, 0, 1, 0 };
-
-    int ndx[4] = { -1, 0, 1, 0 };
-    int ndy[4] = { 0, 1, 0, -1 };
-
-
-    //이 경로에서 방문했던 곳은 다시 방문하지 않도록
-    vector<vector<int>> visited(n + 1, vector<int>(n + 1, 0));
-
-    //거리, 행, 열, d 큰 순으로 
-    priority_queue<tuple<int, int, int, int>, vector<tuple<int, int, int, int>>, greater<>> pq;
-    pq.push({ 0, r, c, d });
-    visited[r][c] = true;
-
-    while (!pq.empty()) {
-        int dist, x, y, cd;
-        tie(dist, x, y, cd) = pq.top(); pq.pop();
-
-        //우선순위큐이므로 제일 앞이 0이라면 그게 정답
-        if (sea[x][y] == 0) {
-            //원래 방향대로 d 갱신
-            if (cd == 0) d = 1;
-            else if (cd == 1) d = 2;
-            else if (cd == 2) d = 3;
-            else if (cd == 3) d = 0;
-
-            return { x, y };
-        }
-
-        for (int i = 3; i >=0; i--) {
-            int nx = x + ndx[i], ny = y + ndy[i];
-            if (nx<1 || ny<1 || nx>n || ny>n) continue;
-            if (sea[nx][ny] == 1) continue; //산호초면 불가
-            if (visited[nx][ny]) continue; //현재 경로에서 이미 방문함
-
-            visited[nx][ny] = true;
-            pq.push({ dist + 1, nx, ny, i});
-        }
-    }
-
-    //여기까지 내려오면 0으로 return되지 못한 것 
-    return { -1, -1 };
-}
-*/
-
 bool jump() {
     //dist, r, c
     queue < tuple<int, int, int>> q;
@@ -159,7 +106,7 @@ bool jump() {
 
             //0이라면 이 방향으로 확장 하지 않고 저장
             if (sea[nx][ny] == 0) {
-                tar.push_back({ dist + 1, nx, ny, nd });
+                tar.push_back({ dist + 1, nx, ny, i });
                 continue;
             }
 
@@ -173,16 +120,11 @@ bool jump() {
 
     if (tar.empty()) return false;
 
-    stable_sort(tar.begin(), tar.end(), [](const auto& a, const auto& b) {
-        if (get<0>(a) != get<0>(b)) return get<0>(a) < get<0>(b);
-        if (get<1>(a) != get<1>(b)) return get<1>(a) < get<1>(b);
-        return get<2>(a) < get<2>(b);
-        //a, b, c 오름차순으로만
-    });
+    stable_sort(tar.begin(), tar.end());
 
     r = get<1>(tar[0]);
     c = get<2>(tar[0]);
-    d = get<3>(tar[0]);
+    d = jd[get<3>(tar[0])];
 
     return true;
 }
